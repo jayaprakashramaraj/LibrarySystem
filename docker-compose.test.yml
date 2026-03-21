@@ -1,0 +1,70 @@
+name: library-system-test-stack
+
+services:
+  # 1. SQL SERVER
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: library-sql-test
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Your_password123 -Q 'SELECT 1' -C || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # 2. MONGODB
+  mongo:
+    image: mongo:6
+    container_name: library-mongo-test
+    healthcheck:
+      test: ["CMD-SHELL", "mongosh --eval \"db.runCommand({ ping: 1 })\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # 3. gRPC SERVICE
+  library.service:
+    build:
+      context: .
+      dockerfile: src/Library.Service/Dockerfile
+    container_name: library-service-test
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Sql=Server=sqlserver,1433;Database=LibraryDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True
+      - ConnectionStrings__Mongo=mongodb://mongo:27017
+
+  # 4. API GATEWAY
+  library.api:
+    build:
+      context: .
+      dockerfile: src/Library.Api/Dockerfile
+    container_name: library-api-test
+    depends_on:
+      library.service:
+        condition: service_started
+    environment:
+      - GRPC__LibraryService=http://library.service:5000
+    healthcheck:
+      # This checks if the port is open without needing curl or wget
+      test: ["CMD-SHELL", "timeout 1s bash -c ':> /dev/tcp/127.0.0.1/5001' || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # 5. SYSTEM TESTS RUNNER
+  system.tests:
+    build:
+      context: .
+      dockerfile: tests/Library.System.Tests/Dockerfile
+    container_name: library-system-tests
+    environment:
+      - BaseUrl=http://library.api:5001
+    depends_on:
+      library.api:
+        condition: service_healthy

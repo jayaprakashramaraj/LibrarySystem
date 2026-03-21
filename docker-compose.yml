@@ -1,0 +1,67 @@
+name: library-system-stack
+
+services:
+
+  # SQL SERVER
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: library-sql
+    environment:
+      SA_PASSWORD: "Your_password123"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: [
+         "CMD-SHELL",
+         "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P Your_password123 -Q 'SELECT 1' -C || exit 1"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # MONGODB
+  mongo:
+    image: mongo:6
+    container_name: library-mongo
+    ports:
+      - "27017:27017"
+    healthcheck:
+      test: [
+        "CMD-SHELL",
+        "mongosh --eval \"db.runCommand({ ping: 1 })\" || exit 1"
+      ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # gRPC SERVICE
+  library.service:
+    build:
+      context: .
+      dockerfile: src/Library.Service/Dockerfile
+    container_name: library-service
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+    environment:
+      - ConnectionStrings__Sql=Server=sqlserver,1433;Database=LibraryDb;User Id=sa;Password=Your_password123;TrustServerCertificate=True
+      - ConnectionStrings__Mongo=mongodb://mongo:27017
+    ports:
+      - "5000:5000"
+
+  # API GATEWAY
+  library.api:
+    build:
+      context: .
+      dockerfile: src/Library.Api/Dockerfile
+    container_name: library-api
+    depends_on:
+      library.service:
+        condition: service_started
+    environment:
+      - GRPC__LibraryService=http://library.service:5000
+    ports:
+      - "5001:5001"

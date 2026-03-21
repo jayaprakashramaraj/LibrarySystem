@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+option csharp_namespace = "Library.Service";
+
+service LibraryService {
+
+  rpc GetMostBorrowed (MostBorrowedRequest) returns (BookList);
+
+  rpc GetUserActivity (UserActivityRequest) returns (BorrowerActivityList);
+
+  rpc GetAlsoBorrowed (BookRequest) returns (BookList);
+}
+
+message MostBorrowedRequest {
+  int32 count = 1;
+}
+
+message BookRequest {
+  string bookId = 1;
+}
+
+message UserActivityRequest {
+  string startDate = 1;
+  string endDate = 2;
+}
+
+message Book {
+  string id = 1;
+  string title = 2;
+}
+
+message BorrowerActivity {
+  string id = 1;
+  string name = 2;
+  int32 totalBooks = 3;
+  double readingPace = 4;
+}
+
+message BookList {
+  repeated Book books = 1;
+}
+
+message BorrowerActivityList {
+  repeated BorrowerActivity items = 1;
+}

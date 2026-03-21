@@ -1,0 +1,25 @@
+<Solution>
+  <Folder Name="/src/">
+    <File Path="docker-compose.test.yml" />
+    <File Path="docker-compose.yml" />
+    <Project Path="src/Library.Api/Library.Api.csproj" />
+    <Project Path="src/Library.Application/Library.Application.csproj" />
+    <Project Path="src/Library.Domain/Library.Domain.csproj" />
+    <Project Path="src/Library.Infrastructure/Library.Infrastructure.csproj" />
+    <Project Path="src/Library.Service/Library.Service.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/IntegrationTests/">
+    <Project Path="tests/Library.Integration.Tests/Library.Integration.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/SystemTests/">
+    <Project Path="tests/Library.System.Tests/Library.System.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/UnitTests/">
+    <Project Path="tests/Library.Api.Tests/Library.Api.Tests.csproj" Id="82ffc6bd-2ccc-490f-923d-155dad438999" />
+    <Project Path="tests/Library.Application.Tests/Library.Application.Tests.csproj" Id="de0e847e-1f22-4e47-8472-cdd8717aefe8" />
+    <Project Path="tests/Library.Domain/Library.Domain.Tests.csproj" Id="4f0d831e-af33-400c-b920-0a5ebbe34eb7" />
+    <Project Path="tests/Library.Infrastructure.Tests/Library.Infrastructure.Tests.csproj" Id="56a6d411-b29a-4302-bd0f-9aface2f5125" />
+    <Project Path="tests/Library.Service.Tests/Library.Service.Tests.csproj" Id="efb0b5e9-bc2a-48e8-bfb0-7b9445e6d829" />
+  </Folder>
+</Solution>
