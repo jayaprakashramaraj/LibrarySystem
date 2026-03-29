@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using MongoDB.Driver;
 using Library.Service.Interceptors;
 using Library.Infrastructure.Repositories;
+using Library.Application.Commands;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -54,6 +55,9 @@ builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IBorrowerActivityService, BorrowerActivityService>();
 builder.Services.AddScoped<IBorrowingPatternService, BorrowingPatternService>();
 builder.Services.AddScoped<IBorrowService, BorrowService>();
+
+// MediatR (CQRS)
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblyContaining<BorrowBookCommand>());
 
 // =========================================
 // 5. gRPC
