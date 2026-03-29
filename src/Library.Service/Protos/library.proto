@@ -9,6 +9,9 @@ service LibraryService {
   rpc GetUserActivity (UserActivityRequest) returns (BorrowerActivityList);
 
   rpc GetAlsoBorrowed (BookRequest) returns (BookList);
+
+  // Command - borrow a book (CQRS write)
+  rpc BorrowBook (BorrowBookRequest) returns (BorrowBookResponse);
 }
 
 message MostBorrowedRequest {
@@ -22,6 +25,18 @@ message BookRequest {
 message UserActivityRequest {
   string startDate = 1;
   string endDate = 2;
+}
+
+message BorrowBookRequest {
+  string bookId = 1;
+  string borrowerId = 2;
+  string borrowDate = 3; // ISO format
+}
+
+message BorrowBookResponse {
+  bool success = 1;
+  string loanId = 2;
+  string message = 3;
 }
 
 message Book {

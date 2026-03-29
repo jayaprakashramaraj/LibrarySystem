@@ -20,4 +20,10 @@ public class LoanRepository : ILoanRepository
             .Where(x => x.BorrowDate >= start && x.BorrowDate <= end)
             .ToListAsync();
     }
+
+    public async Task AddAsync(Loan loan)
+    {
+        await _db.Loans.AddAsync(loan);
+        await _db.SaveChangesAsync();
+    }
 }

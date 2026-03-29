@@ -59,6 +59,24 @@ public class LibraryController : ControllerBase
         }
     }
 
+    [HttpPost("borrow")]
+    public async Task<IActionResult> Borrow([FromBody] BorrowRequestDto request)
+    {
+        try
+        {
+            var response = await _client.BorrowBookAsync(request.BookId, request.BorrowerId, DateTime.UtcNow);
+
+            if (!response.Success)
+                return BadRequest(new { error = response.Message });
+
+            return Ok(new { loanId = response.LoanId, message = response.Message });
+        }
+        catch (RpcException ex)
+        {
+            return HandleGrpcException(ex);
+        }
+    }
+
     private IActionResult HandleGrpcException(RpcException ex)
     {
         return StatusCode(500, new { source = "Library service", error = ex.Status.Detail });
