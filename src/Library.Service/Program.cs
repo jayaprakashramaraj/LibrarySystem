@@ -22,12 +22,8 @@ Console.WriteLine($"Mongo Connection: {mongoConnection}");
 // =========================================
 // 2. SQL SERVER (EF CORE)
 // =========================================
-builder.Services.AddDbContext<LibraryDbContext>(opts =>
-    opts.UseSqlServer(sqlConnection, sqlOpts =>
-        sqlOpts.EnableRetryOnFailure(
-            maxRetryCount: 5,
-            maxRetryDelay: TimeSpan.FromSeconds(10),
-            errorNumbersToAdd: null)));
+builder.Services.AddDbContext<LibraryDbContext>(options =>
+    options.UseSqlServer(sqlConnection));
 
 // =========================================
 // 3. MONGO DB
@@ -53,7 +49,6 @@ builder.Services.AddScoped<IPatternRepository, PatternRepository>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
 builder.Services.AddScoped<IBorrowerActivityService, BorrowerActivityService>();
 builder.Services.AddScoped<IBorrowingPatternService, BorrowingPatternService>();
-builder.Services.AddScoped<IBorrowService, BorrowService>();
 
 // =========================================
 // 5. gRPC

@@ -5,7 +5,6 @@ public interface ILibraryGrpcClient
     Task<BookList> GetMostBorrowedAsync(int count);
     Task<BorrowerActivityList> GetUserActivityAsync(DateTime start, DateTime end);
     Task<BookList> GetAlsoBorrowedAsync(Guid bookId);
-    Task<BorrowBookResponse> BorrowBookAsync(Guid bookId, Guid borrowerId, DateTime borrowDate);
 }
 
 public class LibraryGrpcClientWrapper : ILibraryGrpcClient
@@ -36,16 +35,6 @@ public class LibraryGrpcClientWrapper : ILibraryGrpcClient
         return await _client.GetAlsoBorrowedAsync(new BookRequest
         {
             BookId = bookId.ToString()
-        });
-    }
-
-    public async Task<BorrowBookResponse> BorrowBookAsync(Guid bookId, Guid borrowerId, DateTime borrowDate)
-    {
-        return await _client.BorrowBookAsync(new BorrowBookRequest
-        {
-            BookId = bookId.ToString(),
-            BorrowerId = borrowerId.ToString(),
-            BorrowDate = borrowDate.ToString("O")
         });
     }
 }

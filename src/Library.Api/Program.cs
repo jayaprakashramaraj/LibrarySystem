@@ -6,25 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 // =========================================
 // CONFIGURATION
 // =========================================
-var grpcUrl = Environment.GetEnvironmentVariable("GRPC__LibraryService")
-              ?? builder.Configuration["GRPC:LibraryService"]
-             ?? Environment.GetEnvironmentVariable("LIBRARY_SERVICE_ADDR");
+var grpcUrl = builder.Configuration["GRPC:LibraryService"];
 
-// If not provided, allow a sensible local default when running in Development
-if (string.IsNullOrWhiteSpace(grpcUrl))
+if (string.IsNullOrEmpty(grpcUrl))
 {
-    if (builder.Environment.IsDevelopment())
-    {
-        // Local development default (use the typical Kestrel port used by Library.Service when running locally)
-        grpcUrl = "http://localhost:6001";
-    }
-    else
-    {
-        throw new Exception("gRPC service URL is not configured. Set 'GRPC:LibraryService' in configuration or environment variable 'GRPC__LibraryService' or 'LIBRARY_SERVICE_ADDR'.");
-    }
+    throw new Exception("gRPC service URL is not configured.");
 }
 
-// =========================================    
+// =========================================
 // gRPC CLIENT 
 // =========================================
 builder.Services.AddGrpcClient<LibraryService.LibraryServiceClient>(options =>

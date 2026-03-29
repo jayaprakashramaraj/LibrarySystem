@@ -7,18 +7,15 @@ public class LibraryGrpcService : LibraryService.LibraryServiceBase
     private readonly IInventoryService _inventory;
     private readonly IBorrowerActivityService _user;
     private readonly IBorrowingPatternService _pattern;
-    private readonly IBorrowService _borrowService;
 
     public LibraryGrpcService(
         IInventoryService inventory,
         IBorrowerActivityService user,
-        IBorrowingPatternService pattern,
-        IBorrowService borrowService)
+        IBorrowingPatternService pattern)
     {
         _inventory = inventory;
         _user = user;
         _pattern = pattern;
-        _borrowService = borrowService;
     }
 
     public override async Task<BookList> GetMostBorrowed(
@@ -75,21 +72,5 @@ public class LibraryGrpcService : LibraryService.LibraryServiceBase
         }));
 
         return response;
-    }
-
-    public override async Task<BorrowBookResponse> BorrowBook(BorrowBookRequest request, ServerCallContext context)
-    {
-        var bookId = Guid.Parse(request.BookId);
-        var borrowerId = Guid.Parse(request.BorrowerId);
-        var borrowDate = DateTime.Parse(request.BorrowDate);
-
-        var result = await _borrowService.BorrowBookAsync(bookId, borrowerId, borrowDate);
-
-        return new BorrowBookResponse
-        {
-            Success = result.Success,
-            LoanId = result.LoanId?.ToString() ?? string.Empty,
-            Message = result.Message ?? string.Empty
-        };
     }
 }

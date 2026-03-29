@@ -62,6 +62,6 @@ services:
       library.service:
         condition: service_started
     environment:
-      - LIBRARY_SERVICE_ADDR=http://library.service:5000
+      - GRPC__LibraryService=http://library.service:5000
     ports:
       - "5001:5001"

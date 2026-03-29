@@ -46,32 +46,16 @@ public class BorrowerActivityService : IBorrowerActivityService
                 double calculatedPace = 0;
                 if (returnedLoans.Any())
                 {
-                    //calculatedPace = returnedLoans.Average(l =>
-                    //{
-                    //    if (books.TryGetValue(l.BookId, out var book))
-                    //    {
-                    //        var duration = (l.ReturnDate.Value - l.BorrowDate).TotalDays;
-                    //        double days = duration < 1 ? 1 : duration;
-                    //        return book.Pages / days;
-                    //    }
-                    //    return 0;
-                    //});
-                    double totalPages = 0;
-                    double totalDays = 0;
-
-                    foreach (var l in returnedLoans)
+                    calculatedPace = returnedLoans.Average(l =>
                     {
                         if (books.TryGetValue(l.BookId, out var book))
                         {
                             var duration = (l.ReturnDate.Value - l.BorrowDate).TotalDays;
                             double days = duration < 1 ? 1 : duration;
-
-                            totalPages += book.Pages;
-                            totalDays += days;
+                            return book.Pages / days;
                         }
-                    }
-
-                    calculatedPace = totalDays == 0 ? 0 : totalPages / totalDays;
+                        return 0;
+                    });
                 }
 
                 return new BorrowerActivityDto(
