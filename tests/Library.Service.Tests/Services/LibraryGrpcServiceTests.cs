@@ -9,6 +9,7 @@ public class LibraryGrpcServiceTests
     private readonly Mock<IInventoryService> _inventoryMock;
     private readonly Mock<IBorrowerActivityService> _userMock;
     private readonly Mock<IBorrowingPatternService> _patternMock;
+    private readonly Mock<IBorrowService> _borrowMock;
     private readonly LibraryGrpcService _service;
 
     public LibraryGrpcServiceTests()
@@ -16,11 +17,14 @@ public class LibraryGrpcServiceTests
         _inventoryMock = new Mock<IInventoryService>();
         _userMock = new Mock<IBorrowerActivityService>();
         _patternMock = new Mock<IBorrowingPatternService>();
+        _borrowMock = new Mock<IBorrowService>();
 
         _service = new LibraryGrpcService(
             _inventoryMock.Object,
             _userMock.Object,
-            _patternMock.Object);
+            _patternMock.Object,
+            _borrowMock.Object
+            );
     }
 
     [Fact]
